@@ -6,18 +6,35 @@ export default function App() {
   const [logs, setLogs] = useState<string[]>([])
 
   useEffect(() => {
+    const context = cast.framework.CastReceiverContext.getInstance()
+    const castDebugLogger = cast.debug.CastDebugLogger.getInstance();
+    const LOG_TAG = 'MyAPP.LOG';
+
+    context.addEventListener(cast.framework.system.EventType.READY, () => {
+      if (!(castDebugLogger as unknown as {debugOverlayElement_: object}).debugOverlayElement_) {
+        castDebugLogger.setEnabled(true);
+
+        // Show debug overlay.
+        castDebugLogger.showDebugLogs(true);
+
+        // Clear log messages on debug overlay.
+        castDebugLogger.clearDebugLogs();
+      }
+    });
+
     const namespace = 'urn:x-cast:com.soulfiremc'
     const listener: SystemEventHandler = (customEvent) => {
+      castDebugLogger.info(LOG_TAG, `Received message: ${JSON.stringify(customEvent, null, 2)}`)
       setLogs((prevLogs) => [...prevLogs, JSON.stringify(customEvent, null, 2)])
     }
-    cast.framework.CastReceiverContext.getInstance().addCustomMessageListener(namespace, listener)
-    cast.framework.CastReceiverContext.getInstance().start({
+    context.addCustomMessageListener(namespace, listener)
+    context.start({
       skipPlayersLoad: true,
     })
 
     return () => {
-      cast.framework.CastReceiverContext.getInstance().removeCustomMessageListener(namespace, listener)
-      cast.framework.CastReceiverContext.getInstance().stop()
+      context.removeCustomMessageListener(namespace, listener)
+      context.stop()
     }
   }, []);
 
