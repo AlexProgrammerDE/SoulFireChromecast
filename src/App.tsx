@@ -40,8 +40,9 @@ export default function App() {
     context.addEventListener(cast.framework.system.EventType.READY, readyListener)
 
     const options = new cast.framework.CastReceiverOptions();
+    options.skipPlayersLoad = true
     options.customNamespaces = {
-      [namespace]: cast.framework.system.MessageType.JSON,
+      [namespace]: cast.framework.system.MessageType.STRING,
     }
 
     context.start(options)
