@@ -21,7 +21,7 @@ export default function App() {
 
     const readyListener: SystemEventHandler = () => {
       addLog('Ready event received')
-      context.sendCustomMessage(namespace, cast.framework.system.MessageType.JSON, {
+      context.sendCustomMessage(namespace, undefined, {
         message: 'Hello from Chromecast!'
       })
     }
