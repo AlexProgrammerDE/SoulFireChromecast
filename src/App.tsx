@@ -3,7 +3,7 @@ import {useState} from "react";
 import {Loader2Icon} from "lucide-react";
 
 export default function App() {
-  const [loading, setLoading] = useState(true)
+  const [loading, ] = useState(true)
 
   return (
     <>
