@@ -3,10 +3,10 @@ import ReactDOM from 'react-dom/client'
 import App from './App.tsx'
 import './index.css'
 
-cast.framework.CastReceiverContext.getInstance().start();
-
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <App />
   </React.StrictMode>,
 )
+
+cast.framework.CastReceiverContext.getInstance().start();
