@@ -1,7 +1,6 @@
 import 'non.geist'
 import {useEffect, useState} from "react";
 import {Loader2Icon} from "lucide-react";
-import {cast} from "chromecast-caf-receiver";
 
 export default function App() {
   const [loading, setLoading] = useState(true)
