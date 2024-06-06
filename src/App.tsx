@@ -2,23 +2,44 @@ import 'non.geist'
 import {useEffect, useState} from "react";
 import {Loader2Icon} from "lucide-react";
 
+type MessageTypes = {
+  type: "INITIAL_HELLO"
+} | {
+  type: "CHALLENGE_RESPONSE",
+  challenge: string
+} | {
+  type: "DISPLAY_LOGS",
+  logs: string[]
+}
+
 export default function App() {
   const [logs, setLogs] = useState<string[]>([])
 
   useEffect(() => {
+    const sharedChallenge = Math.random().toString(36)
     const context = cast.framework.CastReceiverContext.getInstance();
 
     const namespace = 'urn:x-cast:com.soulfiremc'
     const listener: SystemEventHandler = (customEvent) => {
-      const message = `Received message: ${JSON.stringify(customEvent)}`
-
-      setLogs((prevLogs) => {
-        if (prevLogs.length === 0) {
+      const data = (customEvent as unknown as { data: MessageTypes }).data
+      switch (data.type) {
+        case "INITIAL_HELLO":
+          context.sendCustomMessage(namespace, undefined, {
+            type: 'CHALLENGE_REQUEST',
+            challenge: sharedChallenge
+          })
+          break
+        case "CHALLENGE_RESPONSE":
+          if (data.challenge === sharedChallenge) {
             context.setApplicationState('Showing graphs')
-        }
-
-        return[...prevLogs, message]
-      })
+          } else {
+            context.setApplicationState('Invalid challenge')
+          }
+          break
+        case "DISPLAY_LOGS":
+          setLogs((prevLogs) => [...prevLogs, ...data.logs])
+          break
+      }
     }
     context.addCustomMessageListener(namespace, listener)
 
