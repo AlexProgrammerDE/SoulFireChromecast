@@ -25,10 +25,12 @@ export default function App() {
       setLogs((prevLogs) => [...prevLogs, JSON.stringify(customEvent, null, 2)])
     }
     context.addCustomMessageListener(namespace, listener)
+
     context.start({
       skipPlayersLoad: true,
     })
 
+    castDebugLogger.info(LOG_TAG, 'Started app...')
     return () => {
       context.removeCustomMessageListener(namespace, listener)
       context.stop()
