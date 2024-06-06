@@ -5,24 +5,17 @@ import {Loader2Icon} from "lucide-react";
 export default function App() {
   const [logs, setLogs] = useState<string[]>([])
 
+  const addLog = (log: string) => {
+    setLogs((prevLogs) => [...prevLogs, log])
+  }
+
   useEffect(() => {
     const context = cast.framework.CastReceiverContext.getInstance()
-    const castDebugLogger = cast.debug.CastDebugLogger.getInstance();
-    const LOG_TAG = 'SoulFire.LOG';
 
-    context.addEventListener(cast.framework.system.EventType.READY, () => {
-      if (!(castDebugLogger as unknown as {debugOverlayElement_: object}).debugOverlayElement_) {
-        castDebugLogger.setEnabled(true);
-
-        // Show debug overlay.
-        castDebugLogger.showDebugLogs(true);
-      }
-    });
-
+    addLog('Starting app...')
     const namespace = 'urn:x-cast:com.soulfiremc'
     const listener: SystemEventHandler = (customEvent) => {
-      castDebugLogger.info(LOG_TAG, `Received message: ${JSON.stringify(customEvent, null, 2)}`)
-      setLogs((prevLogs) => [...prevLogs, JSON.stringify(customEvent, null, 2)])
+      addLog(`Received message: ${JSON.stringify(customEvent, null, 2)}`)
     }
     context.addCustomMessageListener(namespace, listener)
 
@@ -30,7 +23,7 @@ export default function App() {
       skipPlayersLoad: true,
     })
 
-    castDebugLogger.info(LOG_TAG, 'Started app...')
+    addLog('Started app...')
     return () => {
       context.removeCustomMessageListener(namespace, listener)
       context.stop()
