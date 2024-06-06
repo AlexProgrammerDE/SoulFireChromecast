@@ -56,6 +56,7 @@ export default function App() {
 
     const options = new cast.framework.CastReceiverOptions();
     options.skipPlayersLoad = true
+    options.disableIdleTimeout = true
     options.customNamespaces = {
       [namespace]: cast.framework.system.MessageType.JSON,
     }
