@@ -30,9 +30,9 @@ export default function App() {
         castDebugLogger.showDebugLogs(true);
       }
 
-      context.sendCustomMessage(namespace, undefined, {
+      context.sendCustomMessage(namespace, undefined, JSON.stringify({
         message: 'Hello from Chromecast!'
-      })
+      }))
       addLog('Ready event received')
       castDebugLogger.info(LOG_TAG, 'Ready event received')
     }
