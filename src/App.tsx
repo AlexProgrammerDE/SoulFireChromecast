@@ -5,36 +5,27 @@ import {Loader2Icon} from "lucide-react";
 export default function App() {
   const [logs, setLogs] = useState<string[]>([])
 
-  const addLog = (log: string) => {
-    setLogs((prevLogs) => [...prevLogs, log])
-  }
-
   useEffect(() => {
     const context = cast.framework.CastReceiverContext.getInstance();
-    const castDebugLogger = cast.debug.CastDebugLogger.getInstance();
-    const LOG_TAG = 'SoulFire.LOG';
 
-    addLog('Starting app...')
     const namespace = 'urn:x-cast:com.soulfiremc'
     const listener: SystemEventHandler = (customEvent) => {
-      addLog(`Received message`)
-      addLog(JSON.stringify((customEvent as unknown as { data: object }).data, null, 2))
+      const message = `Received message: ${JSON.stringify(customEvent)}`
+
+      setLogs((prevLogs) => {
+        if (prevLogs.length === 0) {
+            context.setApplicationState('Showing graphs')
+        }
+
+        return[...prevLogs, message]
+      })
     }
     context.addCustomMessageListener(namespace, listener)
 
     const readyListener: SystemEventHandler = () => {
-      if (!(castDebugLogger as unknown as {debugOverlayElement_: object}).debugOverlayElement_) {
-        castDebugLogger.setEnabled(true);
-
-        // Show debug overlay.
-        castDebugLogger.showDebugLogs(true);
-      }
-
       context.sendCustomMessage(namespace, undefined, {
         message: 'Hello from Chromecast!'
       })
-      addLog('Ready event received')
-      castDebugLogger.info(LOG_TAG, 'Ready event received')
     }
 
     context.addEventListener(cast.framework.system.EventType.READY, readyListener)
@@ -45,9 +36,9 @@ export default function App() {
       [namespace]: cast.framework.system.MessageType.JSON,
     }
 
+    context.setApplicationState('Loading')
     context.start(options)
 
-    addLog('Started app')
     return () => {
       context.removeCustomMessageListener(namespace, listener)
       context.removeEventListener(cast.framework.system.EventType.READY, readyListener)
