@@ -1,6 +1,7 @@
 import 'non.geist'
 import {useEffect, useState} from "react";
 import {Loader2Icon} from "lucide-react";
+import {cast} from "chromecast-caf-receiver";
 
 export default function App() {
   const [loading, setLoading] = useState(true)
@@ -21,9 +22,16 @@ export default function App() {
       setLogs((prevLogs) => [...prevLogs, JSON.stringify(customEvent, null, 2)])
     }
     cast.framework.CastReceiverContext.getInstance().addCustomMessageListener(namespace, listener)
+    cast.framework.CastReceiverContext.getInstance().start({
+      customNamespaces: {
+        "urn:x-cast:com.soulfiremc": cast.framework.system.MessageType.JSON
+      },
+      skipPlayersLoad: true,
+    })
 
     return () => {
       cast.framework.CastReceiverContext.getInstance().removeCustomMessageListener(namespace, listener)
+      cast.framework.CastReceiverContext.getInstance().stop()
     }
   }, []);
 
