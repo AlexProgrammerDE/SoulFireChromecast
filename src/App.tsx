@@ -30,9 +30,9 @@ export default function App() {
         castDebugLogger.showDebugLogs(true);
       }
 
-      context.sendCustomMessage(namespace, undefined, JSON.stringify({
+      context.sendCustomMessage(namespace, undefined, {
         message: 'Hello from Chromecast!'
-      }))
+      })
       addLog('Ready event received')
       castDebugLogger.info(LOG_TAG, 'Ready event received')
     }
@@ -42,7 +42,7 @@ export default function App() {
     const options = new cast.framework.CastReceiverOptions();
     options.skipPlayersLoad = true
     options.customNamespaces = {
-      [namespace]: cast.framework.system.MessageType.STRING,
+      [namespace]: cast.framework.system.MessageType.JSON,
     }
 
     context.start(options)
