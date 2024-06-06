@@ -15,7 +15,7 @@ export default function App() {
     addLog('Starting app...')
     const namespace = 'urn:x-cast:com.soulfiremc'
     const listener: SystemEventHandler = (customEvent) => {
-      addLog(`Received message: ${JSON.stringify(customEvent, null, 2)}`)
+      addLog(`Received message: ${JSON.stringify((customEvent as unknown as {data: object}).data, null, 2)}`)
     }
     context.addCustomMessageListener(namespace, listener)
 
@@ -23,7 +23,7 @@ export default function App() {
       skipPlayersLoad: true,
     })
 
-    addLog('Started app...')
+    addLog('Started app')
     return () => {
       context.removeCustomMessageListener(namespace, listener)
       context.stop()
