@@ -5,7 +5,7 @@ import './index.css'
 
 cast.framework.CastReceiverContext.getInstance().start({
   customNamespaces: {
-    "urn:x-cast:com.soulfire": cast.framework.system.MessageType.JSON
+    "urn:x-cast:com.soulfiremc": cast.framework.system.MessageType.JSON
   },
   skipPlayersLoad: true,
 });
