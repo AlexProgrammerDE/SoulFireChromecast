@@ -7,7 +7,7 @@ export default function App() {
   const [logs, setLogs] = useState<string[]>([])
 
   useEffect(() => {
-    const namespace = 'urn:x-cast:com.soulfire'
+    const namespace = 'urn:x-cast:com.soulfiremc'
     const listener: SystemEventHandler = (customEvent) => {
       // Set to not loading if it is loading
       setLoading(current => {
