@@ -10,7 +10,9 @@ export default function App() {
   }
 
   useEffect(() => {
-    const context = cast.framework.CastReceiverContext.getInstance()
+    const context = cast.framework.CastReceiverContext.getInstance();
+    const castDebugLogger = cast.debug.CastDebugLogger.getInstance();
+    const LOG_TAG = 'SoulFire.LOG';
 
     addLog('Starting app...')
     const namespace = 'urn:x-cast:com.soulfiremc'
@@ -20,10 +22,18 @@ export default function App() {
     context.addCustomMessageListener(namespace, listener)
 
     const readyListener: SystemEventHandler = () => {
-      addLog('Ready event received')
+      if (!(castDebugLogger as unknown as {debugOverlayElement_: object}).debugOverlayElement_) {
+        castDebugLogger.setEnabled(true);
+
+        // Show debug overlay.
+        castDebugLogger.showDebugLogs(true);
+      }
+
       context.sendCustomMessage(namespace, undefined, {
         message: 'Hello from Chromecast!'
       })
+      addLog('Ready event received')
+      castDebugLogger.info(LOG_TAG, 'Ready event received')
     }
 
     context.addEventListener(cast.framework.system.EventType.READY, readyListener)
