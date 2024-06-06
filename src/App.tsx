@@ -15,17 +15,31 @@ export default function App() {
     addLog('Starting app...')
     const namespace = 'urn:x-cast:com.soulfiremc'
     const listener: SystemEventHandler = (customEvent) => {
-      addLog(`Received message: ${JSON.stringify((customEvent as unknown as {data: object}).data, null, 2)}`)
+      addLog(`Received message: ${JSON.stringify((customEvent as unknown as { data: object }).data, null, 2)}`)
     }
     context.addCustomMessageListener(namespace, listener)
 
-    context.start({
-      skipPlayersLoad: true,
-    })
+    const readyListener: SystemEventHandler = () => {
+      addLog('Ready event received')
+      context.sendCustomMessage(namespace, cast.framework.system.MessageType.JSON, {
+        message: 'Hello from Chromecast!'
+      })
+    }
+
+    context.addEventListener(cast.framework.system.EventType.READY, readyListener)
+
+    const options = new cast.framework.CastReceiverOptions();
+    options.skipPlayersLoad = true
+    options.customNamespaces = {
+      [namespace]: cast.framework.system.MessageType.JSON,
+    }
+
+    context.start(options)
 
     addLog('Started app')
     return () => {
       context.removeCustomMessageListener(namespace, listener)
+      context.removeEventListener(cast.framework.system.EventType.READY, readyListener)
       context.stop()
     }
   }, []);
