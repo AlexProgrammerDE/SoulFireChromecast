@@ -32,6 +32,9 @@ export default function App() {
         case "CHALLENGE_RESPONSE":
           if (data.challenge === sharedChallenge) {
             context.setApplicationState('Showing graphs')
+            context.sendCustomMessage(namespace, undefined, {
+              type: 'LOGIN_SUCCESS'
+            })
           } else {
             context.setApplicationState('Invalid challenge')
           }
