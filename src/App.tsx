@@ -8,7 +8,7 @@ export default function App() {
   useEffect(() => {
     const context = cast.framework.CastReceiverContext.getInstance()
     const castDebugLogger = cast.debug.CastDebugLogger.getInstance();
-    const LOG_TAG = 'MyAPP.LOG';
+    const LOG_TAG = 'SoulFire.LOG';
 
     context.addEventListener(cast.framework.system.EventType.READY, () => {
       if (!(castDebugLogger as unknown as {debugOverlayElement_: object}).debugOverlayElement_) {
