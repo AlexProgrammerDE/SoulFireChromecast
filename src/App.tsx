@@ -16,9 +16,6 @@ export default function App() {
 
         // Show debug overlay.
         castDebugLogger.showDebugLogs(true);
-
-        // Clear log messages on debug overlay.
-        castDebugLogger.clearDebugLogs();
       }
     });
 
