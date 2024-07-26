@@ -14,6 +14,7 @@ type MessageTypes = {
 
 export default function App() {
   const [logs, setLogs] = useState<string[]>([])
+  const [lastConnect, setLastConnect] = useState<Date>()
 
   useEffect(() => {
     const sharedChallenge = Math.random().toString(36)
@@ -52,7 +53,17 @@ export default function App() {
       })
     }
 
+    const connectListener: SystemEventHandler = event => {
+      setLogs((prevLogs) => [...prevLogs, `Sender connected ${JSON.stringify(event.data)}`])
+    }
+
+    const disconnectListener: SystemEventHandler = () => {
+      setLogs((prevLogs) => [...prevLogs, `Sender disconnected ${JSON.stringify(event.data)}`])
+    }
+
     context.addEventListener(cast.framework.system.EventType.READY, readyListener)
+    context.addEventListener(cast.framework.system.EventType.SENDER_CONNECTED, connectListener)
+    context.addEventListener(cast.framework.system.EventType.SENDER_DISCONNECTED, disconnectListener)
 
     const options = new cast.framework.CastReceiverOptions();
     options.skipPlayersLoad = true
