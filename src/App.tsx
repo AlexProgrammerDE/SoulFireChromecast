@@ -22,17 +22,17 @@ type ResponseTypes = {
   message: string
 }
 
+const namespace = 'urn:x-cast:com.soulfiremc'
 export default function App() {
   const [logs, setLogs] = useState<string[]>([])
 
   useEffect(() => {
     const sharedChallenge = Math.random().toString(36)
     const context = cast.framework.CastReceiverContext.getInstance();
+
     const sendMessageToSender = (message: ResponseTypes) => {
       context.sendCustomMessage(namespace, undefined, message)
     }
-
-    const namespace = 'urn:x-cast:com.soulfiremc'
     const listener: SystemEventHandler = (customEvent) => {
       const data = (customEvent as unknown as { data: RequestTypes }).data
       switch (data.type) {
