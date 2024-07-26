@@ -2,7 +2,7 @@ import 'non.geist'
 import {useEffect, useState} from "react";
 import {Loader2Icon} from "lucide-react";
 
-type MessageTypes = {
+type RequestTypes = {
   type: "INITIAL_HELLO"
 } | {
   type: "CHALLENGE_RESPONSE",
@@ -12,19 +12,32 @@ type MessageTypes = {
   logs: string[]
 }
 
+type ResponseTypes = {
+  type: "CHALLENGE_REQUEST",
+  challenge: string
+} | {
+  type: "LOGIN_SUCCESS",
+} | {
+  type: "GENERIC_MESSAGE",
+  message: string
+}
+
 export default function App() {
   const [logs, setLogs] = useState<string[]>([])
 
   useEffect(() => {
     const sharedChallenge = Math.random().toString(36)
     const context = cast.framework.CastReceiverContext.getInstance();
+    const sendMessageToSender = (message: ResponseTypes) => {
+      context.sendCustomMessage(namespace, undefined, message)
+    }
 
     const namespace = 'urn:x-cast:com.soulfiremc'
     const listener: SystemEventHandler = (customEvent) => {
-      const data = (customEvent as unknown as { data: MessageTypes }).data
+      const data = (customEvent as unknown as { data: RequestTypes }).data
       switch (data.type) {
         case "INITIAL_HELLO":
-          context.sendCustomMessage(namespace, undefined, {
+          sendMessageToSender({
             type: 'CHALLENGE_REQUEST',
             challenge: sharedChallenge
           })
@@ -32,7 +45,7 @@ export default function App() {
         case "CHALLENGE_RESPONSE":
           if (data.challenge === sharedChallenge) {
             context.setApplicationState('Showing graphs')
-            context.sendCustomMessage(namespace, undefined, {
+            sendMessageToSender({
               type: 'LOGIN_SUCCESS'
             })
           } else {
@@ -47,7 +60,8 @@ export default function App() {
     context.addCustomMessageListener(namespace, listener)
 
     const readyListener: SystemEventHandler = () => {
-      context.sendCustomMessage(namespace, undefined, {
+      sendMessageToSender({
+        type: 'GENERIC_MESSAGE',
         message: 'Hello from Chromecast!'
       })
     }
