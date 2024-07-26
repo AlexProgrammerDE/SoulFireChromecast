@@ -66,12 +66,12 @@ export default function App() {
       })
     }
 
-    const connectListener: SystemEventHandler = event => {
-      setLogs((prevLogs) => [...prevLogs, `Sender connected ${JSON.stringify(event)}`])
+    const connectListener: SystemEventHandler = () => {
+      setLogs((prevLogs) => [...prevLogs, "Sender connected"])
     }
 
-    const disconnectListener: SystemEventHandler = event => {
-      setLogs((prevLogs) => [...prevLogs, `Sender disconnected ${JSON.stringify(event)}`])
+    const disconnectListener: SystemEventHandler = () => {
+      setLogs((prevLogs) => [...prevLogs, "Sender disconnected"])
     }
 
     context.addEventListener(cast.framework.system.EventType.READY, readyListener)
