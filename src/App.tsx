@@ -14,7 +14,6 @@ type MessageTypes = {
 
 export default function App() {
   const [logs, setLogs] = useState<string[]>([])
-  const [lastConnect, setLastConnect] = useState<Date>()
 
   useEffect(() => {
     const sharedChallenge = Math.random().toString(36)
@@ -54,11 +53,13 @@ export default function App() {
     }
 
     const connectListener: SystemEventHandler = event => {
-      setLogs((prevLogs) => [...prevLogs, `Sender connected ${JSON.stringify(event.data)}`])
+      const data = (event as unknown as { data: object })
+      setLogs((prevLogs) => [...prevLogs, `Sender connected ${JSON.stringify(data)}`])
     }
 
-    const disconnectListener: SystemEventHandler = () => {
-      setLogs((prevLogs) => [...prevLogs, `Sender disconnected ${JSON.stringify(event.data)}`])
+    const disconnectListener: SystemEventHandler = event => {
+      const data = (event as unknown as { data: object })
+      setLogs((prevLogs) => [...prevLogs, `Sender disconnected ${JSON.stringify(data)}`])
     }
 
     context.addEventListener(cast.framework.system.EventType.READY, readyListener)
