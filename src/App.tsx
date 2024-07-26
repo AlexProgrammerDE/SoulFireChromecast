@@ -67,13 +67,11 @@ export default function App() {
     }
 
     const connectListener: SystemEventHandler = event => {
-      const data = (event as unknown as { data: object })
-      setLogs((prevLogs) => [...prevLogs, `Sender connected ${JSON.stringify(data)}`])
+      setLogs((prevLogs) => [...prevLogs, `Sender connected ${JSON.stringify(event)}`])
     }
 
     const disconnectListener: SystemEventHandler = event => {
-      const data = (event as unknown as { data: object })
-      setLogs((prevLogs) => [...prevLogs, `Sender disconnected ${JSON.stringify(data)}`])
+      setLogs((prevLogs) => [...prevLogs, `Sender disconnected ${JSON.stringify(event)}`])
     }
 
     context.addEventListener(cast.framework.system.EventType.READY, readyListener)
