@@ -35,7 +35,7 @@ importers:
     devDependencies:
       '@types/chromecast-caf-receiver':
         specifier: ^6.0.14
-        version: 6.0.17
+        version: 6.0.18
       '@types/node':
         specifier: ^22.0.0
         version: 22.9.0
@@ -467,8 +467,8 @@ packages:
   '@swc/types@0.1.12':
     resolution: {integrity: sha512-wBJA+SdtkbFhHjTMYH+dEH1y4VpfGdAc2Kw/LK09i9bXd/K6j6PkDcFCEzb6iVfZMkPRrl/q0e3toqTAJdkIVA==}
 
-  '@types/chromecast-caf-receiver@6.0.17':
-    resolution: {integrity: sha512-vIKyzx7mQglRVJuDl/WE5ehPdAvW4VDShe5I8ewi/8IQjTQkMc1Gx/LjkcpVfxfSSvZ1VKHPbPlJLScgCuAIeg==}
+  '@types/chromecast-caf-receiver@6.0.18':
+    resolution: {integrity: sha512-LjvMsqL9kRmhTylOqy9R2vjU6p8/wNoyHKYhUWAIgb9RAdnr/nhR4gi80Jo9S9BUZ40LBv1XTgwX1UUZ2+Aqww==}
 
   '@types/estree@1.0.6':
     resolution: {integrity: sha512-AYnb1nQyY49te+VRAVgmzfcgjYS91mY5P0TKUDCLEM+gNnA+3T6rWITXRLYCpahpqSQbN5cE+gHpnPyXjHWxcw==}
@@ -1616,7 +1616,7 @@ snapshots:
     dependencies:
       '@swc/counter': 0.1.3
 
-  '@types/chromecast-caf-receiver@6.0.17': {}
+  '@types/chromecast-caf-receiver@6.0.18': {}
 
   '@types/estree@1.0.6': {}
 
