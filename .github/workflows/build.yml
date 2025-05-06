@@ -1,0 +1,33 @@
+name: 'Build and Test'
+
+on:
+  - push
+
+jobs:
+  test:
+    name: Build and Test
+
+    runs-on: ubuntu-24.04
+    steps:
+      - name: 'Checkout repository'
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: 'Setup node'
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      - name: 'Install pnpm'
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: 'Install pnpm packages'
+        run: |
+          pnpm install --prefer-offline --frozen-lockfile
+
+      - name: 'Build pnpm packages'
+        run: |
+          pnpm build
