@@ -44,7 +44,7 @@ export default function App() {
     const sendMessageToSender = (message: ResponseTypes) => {
       context.sendCustomMessage(namespace, undefined, message);
     };
-    const listener: SystemEventHandler = (customEvent) => {
+    const listener: SystemEventHandler & CustomMessageHandler = (customEvent) => {
       const data = (customEvent as unknown as { data: RequestTypes }).data;
       switch (data.type) {
         case "INITIAL_HELLO":
