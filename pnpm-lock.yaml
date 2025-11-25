@@ -21,8 +21,8 @@ importers:
         specifier: ^0.554.0
         version: 0.554.0(react@19.2.0)
       non.geist:
-        specifier: ^1.0.3
-        version: 1.0.4
+        specifier: ^2.0.0
+        version: 2.0.1
       react:
         specifier: ^19.0.0
         version: 19.2.0
@@ -722,8 +722,8 @@ packages:
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
     hasBin: true
 
-  non.geist@1.0.4:
-    resolution: {integrity: sha512-2spmLTgz5ipZrFGLiI1YkiHb8Yit0yFySPvWzal3wCwCFilMFQQ/Jwwz4lcEatwIKUpOeMYwyFwP8MJ8EVKqGA==}
+  non.geist@2.0.1:
+    resolution: {integrity: sha512-hCl7GMAbrEcxTTxVA7tJfqRuFkvLmqQKoKxyOiIFjaoWG7ZZu5TrZN7GqNJ83QLPDZgwqINnJVhRKVwb/Sz1JA==}
 
   picocolors@1.1.1:
     resolution: {integrity: sha512-xceH2snhtb5M9liqDsmEw56le376mTZkEX/jEb/RxNFyegNul7eNslCXP9FDj/Lcu0X8KEyMceP2ntpaHrDEVA==}
@@ -1289,7 +1289,7 @@ snapshots:
 
   nanoid@3.3.11: {}
 
-  non.geist@1.0.4: {}
+  non.geist@2.0.1: {}
 
   picocolors@1.1.1: {}
 
