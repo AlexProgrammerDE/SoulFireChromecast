@@ -1,6 +1,13 @@
 import "non.geist";
 import { Loader2Icon } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import Dashboard from "@/components/dashboard";
+import type {
+  CastInstanceInfo,
+  CastMetricsDistributions,
+  CastMetricsMessage,
+  CastMetricsSnapshot,
+} from "@/lib/cast-protocol";
 
 type RequestTypes =
   | {
@@ -10,10 +17,7 @@ type RequestTypes =
       type: "CHALLENGE_RESPONSE";
       challenge: string;
     }
-  | {
-      type: "DISPLAY_LOGS";
-      logs: string[];
-    };
+  | CastMetricsMessage;
 
 type ResponseTypes =
   | {
@@ -28,14 +32,20 @@ type ResponseTypes =
       message: string;
     };
 
+type Phase = "loading" | "authenticated" | "dashboard";
+
+const MAX_SNAPSHOTS = 20;
 const namespace = "urn:x-cast:com.soulfiremc";
+
 export default function App() {
-  const [logs, setLogs] = useState<
-    {
-      message: string;
-      key: string;
-    }[]
-  >([]);
+  const [phase, setPhase] = useState<Phase>("loading");
+  const [snapshots, setSnapshots] = useState<CastMetricsSnapshot[]>([]);
+  const [distributions, setDistributions] =
+    useState<CastMetricsDistributions | null>(null);
+  const [instanceInfo, setInstanceInfo] = useState<CastInstanceInfo | null>(
+    null,
+  );
+  const authenticatedRef = useRef(false);
 
   useEffect(() => {
     const sharedChallenge = Math.random().toString(36);
@@ -58,6 +68,8 @@ export default function App() {
         case "CHALLENGE_RESPONSE":
           if (data.challenge === sharedChallenge) {
             context.setApplicationState("Showing graphs");
+            authenticatedRef.current = true;
+            setPhase("authenticated");
             sendMessageToSender({
               type: "LOGIN_SUCCESS",
             });
@@ -65,14 +77,23 @@ export default function App() {
             context.setApplicationState("Invalid challenge");
           }
           break;
-        case "DISPLAY_LOGS":
-          setLogs((prevLogs) => [
-            ...prevLogs,
-            ...data.logs.map((log) => ({
-              key: Math.random().toString(24),
-              message: log,
-            })),
-          ]);
+        case "METRICS_UPDATE":
+          if (authenticatedRef.current) {
+            setSnapshots((prev) =>
+              [...prev, data.snapshot].slice(-MAX_SNAPSHOTS),
+            );
+            setDistributions(data.distributions);
+            setInstanceInfo(data.instanceInfo);
+            setPhase("dashboard");
+          }
+          break;
+        case "METRICS_STOP":
+          if (authenticatedRef.current) {
+            setSnapshots([]);
+            setDistributions(null);
+            setInstanceInfo(null);
+            setPhase("authenticated");
+          }
           break;
       }
     };
@@ -85,37 +106,9 @@ export default function App() {
       });
     };
 
-    const connectListener: SystemEventHandler = () => {
-      setLogs((prevLogs) => [
-        ...prevLogs,
-        {
-          key: Math.random().toString(24),
-          message: "Sender connected",
-        },
-      ]);
-    };
-
-    const disconnectListener: SystemEventHandler = () => {
-      setLogs((prevLogs) => [
-        ...prevLogs,
-        {
-          key: Math.random().toString(24),
-          message: "Sender disconnected",
-        },
-      ]);
-    };
-
     context.addEventListener(
       cast.framework.system.EventType.READY,
       readyListener,
-    );
-    context.addEventListener(
-      cast.framework.system.EventType.SENDER_CONNECTED,
-      connectListener,
-    );
-    context.addEventListener(
-      cast.framework.system.EventType.SENDER_DISCONNECTED,
-      disconnectListener,
     );
 
     const options = new cast.framework.CastReceiverOptions();
@@ -138,29 +131,28 @@ export default function App() {
     };
   }, []);
 
+  if (phase === "dashboard" && distributions && instanceInfo) {
+    return (
+      <Dashboard
+        snapshots={snapshots}
+        distributions={distributions}
+        instanceInfo={instanceInfo}
+      />
+    );
+  }
+
   return (
     <div className="h-screen w-screen flex">
-      {logs.length === 0 ? (
-        <div className="m-auto flex flex-col gap-4">
-          <h1 className="text-2xl">SoulFire is loading...</h1>
-          <div className="mx-auto">
-            <Loader2Icon className="animate-spin" size={32} />
-          </div>
+      <div className="m-auto flex flex-col gap-4">
+        <h1 className="text-3xl">
+          {phase === "loading"
+            ? "SoulFire is loading..."
+            : "Connected, waiting for metrics..."}
+        </h1>
+        <div className="mx-auto">
+          <Loader2Icon className="animate-spin" size={32} />
         </div>
-      ) : (
-        <div className="m-auto flex flex-col gap-4">
-          <h1 className="text-3xl">SoulFire is ready!</h1>
-          <div className="overflow-auto h-96 w-96 border border-gray-300 rounded-lg">
-            <ul className="p-4">
-              {logs.map((log) => (
-                <li key={log.key} className="p-2 border-b border-gray-300">
-                  {log.message}
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      )}
+      </div>
     </div>
   );
 }
